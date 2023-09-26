@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <div class="mx-4">
+    <h1>Login</h1>
+    <hr>
+    {% if error is not None %}
+    <div class="card text-bg-danger mb-3" style="max-width: 18rem">
+        <h6 class="card-title">Error</h6>
+        <p class="card-text">{{error}}</p>
+    </div>
+    {% endif %}  
+    <form method="POST">
+        {% csrf_token %}
+        {{form.non_field_error}}
+            <div class="fieldWrapper mb-3">
+                {{form.email.errors }}
+                <label for="{{form.email.id_for_label}}" class="form-label">Email</label>
+                {{form.email}}
+            </div>
+            <div class="fieldWrapper mb-3">
+                {{form.password.errors }}
+                <label for="{{form.password.id_for_label}}" class="form-label">Password</label>
+                {{form.password}}
+            </div>
+        <button class="btn btn-outline-primary">Login</button>
+    </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <article class="mx-4">
+        <h1>{{article.title}}</h1>
+        <h6>{{article.date_created}}</h6>
+        <div class="p-article">
+            <p>{{article.content|linebreaks}}</p>
+        </div>
+        <small>Created by: {{article.author}}</small>
+        <div class="text-center">
+        <h6>{{article.vote}} vote(s)</h6>
+        {% if user_vote_article.is_voted is False %}
+        <a class="btn btn-outline-success" href="{% url 'blog_article_upvote' article.id %}">&#8679;</a>
+        <a class="btn btn-outline-danger" href="{% url 'blog_article_downvote' article.id %}">&#8681;</a>
+        {% endif %}
+        </div>
+        {% if article.edited is True %}
+        <small>Edited</small>
+        {% endif %}
+    </article>
+
+    <div class="mx-4">
+        <h1>Comments</h1>
+        <hr>
+        <p>Write your commentary</p>
+        {% if request.user.is_authenticated is True %}
+        <form method="POST">
+            {% csrf_token %}
+            {{comment_form.non_field_error}}
+            <div class="fieldWrapper mb-3">
+                {{comment_form.content.errors }}
+                <label for="{{comment_form.content.id_for_label}}" class="form-label">Message</label>
+                {{comment_form.content}}
+            </div>
+            <button class="btn btn-outline-primary">Submit comment</button>
+        </form>
+        {% else %}
+        <h4>You need an account to comment</h4>
+        {% endif %}
+        <hr>
+        {% for comment in comments %}
+            <h6>{{comment.user}}</h6>
+            <p>{{comment.content}}</p>
+            <div class="mb-2"><small>{{comment.vote}} vote(s)</small></div>
+            {% if comment.user == request.user %}
+            <div class="mb-2">
+            <a class="btn btn-outline-primary" href="{% url 'blog_commentary_update' comment.id %}">&#9998;</a>
+            <a class="btn btn-outline-danger" href="{% url 'blog_commentary_delete' comment.id %}">&#10006;</a>
+            </div>
+            {% endif %}
+            {% for user_comment in user_vote_commentary %}
+                {% if user_comment.is_voted is False and user_comment.commentary.id == comment.id %}
+                    <div class="mb-2">
+                    <a class="btn btn-outline-success" href="{% url 'blog_commentary_upvote' comment.id %}">&#8679;</a>
+                    <a class="btn btn-outline-danger" href="{% url 'blog_commentary_downvote' comment.id %}">&#8681;</a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            {% if comment.edited is True %}
+            <small><strong>Edited</strong></small>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

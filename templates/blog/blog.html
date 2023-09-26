@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    {% for blog in blogs %}
+    <div class="card text-center container-blog">
+        <div class="card-body">
+        <a href="{% url 'blog_article' blog.article.id %}">
+            <h1 class="card-title">{{blog.article.title}}</h1>
+            <p class="card-text">{{blog.article.content|slice:":200"}}...</p>
+            <h6 class="card-text">{{blog.article.vote}} vote(s)</h6>
+            <small class="card-text">{{blog.article.author}}</small>
+            <h6 class="card-text">{{blog.article.date_created}}</h6>
+            {% if blog.article.edited is True %}
+            <small class="card-text"><strong>Edited</strong></small>
+            {% endif %}
+        </a>
+        {% if blog.article.author == request.user %}
+        <div class="mt-4">
+        <a class="btn btn-outline-primary" href="{% url 'blog_article_update' blog.article.id %}">&#9998;</a>
+        <a class="btn btn-outline-danger" href="{% url 'blog_article_delete' blog.article.id %}">&#10006;</a>
+        </div>
+        {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="text-center mb-4">
+        <a class="btn btn-outline-primary" href="{% url 'blog_blog' pk_previous %}">&#8592;</a>
+        <a class="btn btn-outline-primary" href="{% url 'blog_blog' pk_next %}">&#8594;</a>
+    </div>
+{% endblock %}
